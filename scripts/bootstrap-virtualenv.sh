@@ -17,6 +17,7 @@ else
     virtualenv ${VE_DIR}
 fi
 
+echo "JAY MADE AN EDIT. YAY."
 source ${VE_DIR}/bin/activate
 
 pip install --upgrade -r requirements.txt -r dev-requirements.txt
