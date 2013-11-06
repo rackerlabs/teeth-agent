@@ -6,8 +6,6 @@
 # as on Jenkins.
 #
 
-echo "BREAK DA BUILD" && exit 1
-
 set -e
 
 VE_DIR=${VE_DIR:=.ve}
