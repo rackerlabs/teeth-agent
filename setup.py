@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+I AM NOT PYTHON. RAWR.
+
 """
 Copyright 2013 Rackspace, Inc.
 
