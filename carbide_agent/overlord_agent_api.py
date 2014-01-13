@@ -16,9 +16,9 @@ limitations under the License.
 
 import requests
 
-from teeth_rest import encoding
+from carbide_rest import encoding
 
-from teeth_agent import errors
+from carbide_agent import errors
 
 
 class APIClient(object):

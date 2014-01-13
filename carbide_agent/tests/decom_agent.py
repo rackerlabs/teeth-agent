@@ -14,21 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import argparse
+import unittest
 
-from teeth_agent import decom
-from teeth_agent import logging
+from carbide_agent import decom
 
 
-def run():
-    parser = argparse.ArgumentParser(
-        description='Run the teeth-agent in decom mode')
+class TestBaseCarbideAgent(unittest.TestCase):
+    def setUp(self):
+        self.agent = decom.DecomAgent('fake_host', 'fake_port', 'fake_api')
 
-    parser.add_argument('--api-url',
-                        required=True,
-                        help='URL of the Teeth agent API')
-
-    args = parser.parse_args()
-
-    logging.configure()
-    decom.DecomAgent('0.0.0.0', 9999, args.api_url).run()
+    def test_decom_mode(self):
+        self.assertEqual(self.agent.mode, 'DECOM')

@@ -16,11 +16,11 @@ limitations under the License.
 
 import unittest
 
-from teeth_agent import errors
-from teeth_agent import standby
+from carbide_agent import errors
+from carbide_agent import standby
 
 
-class TestBaseTeethAgent(unittest.TestCase):
+class TestBaseCarbideAgent(unittest.TestCase):
     def setUp(self):
         self.agent = standby.StandbyAgent('fake_host', 'fake_port', 'fake_api')
 

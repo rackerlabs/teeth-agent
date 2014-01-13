@@ -20,13 +20,13 @@ import mock
 import time
 import unittest
 
-from teeth_agent import errors
-from teeth_agent import overlord_agent_api
+from carbide_agent import errors
+from carbide_agent import overlord_agent_api
 
 API_URL = 'http://agent-api.overlord.example.org/'
 
 
-class TestBaseTeethAgent(unittest.TestCase):
+class TestBaseCarbideAgent(unittest.TestCase):
     def setUp(self):
         self.api_client = overlord_agent_api.APIClient(API_URL)
 
