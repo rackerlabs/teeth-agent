@@ -16,10 +16,10 @@ limitations under the License.
 
 import unittest
 
-from teeth_agent import decom
+from carbide_agent import decom
 
 
-class TestBaseTeethAgent(unittest.TestCase):
+class TestBaseCarbideAgent(unittest.TestCase):
     def setUp(self):
         self.agent = decom.DecomAgent('fake_host', 'fake_port', 'fake_api')
 

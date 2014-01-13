@@ -14,10 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from teeth_agent import base
+from carbide_agent import base
 
 
-class DecomAgent(base.BaseTeethAgent):
+class DecomAgent(base.BaseCarbideAgent):
     def __init__(self, listen_host, listen_port, api_url):
         super(DecomAgent, self).__init__(listen_host,
                                          listen_port,

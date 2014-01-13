@@ -17,10 +17,10 @@ limitations under the License.
 import mock
 import unittest
 
-from teeth_agent import hardware
+from carbide_agent import hardware
 
 
-class TestBaseTeethAgent(unittest.TestCase):
+class TestBaseCarbideAgent(unittest.TestCase):
     def setUp(self):
         self.hardware = hardware.HardwareInspector()
 

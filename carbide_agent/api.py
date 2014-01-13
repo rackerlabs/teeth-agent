@@ -14,9 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from teeth_rest import component
-from teeth_rest import errors
-from teeth_rest import responses
+from carbide_rest import component
+from carbide_rest import errors
+from carbide_rest import responses
 
 
 class AgentCommand(object):
@@ -38,11 +38,11 @@ class AgentCommand(object):
         return cls(obj['name'], obj['params'])
 
 
-class TeethAgentAPI(component.APIComponent):
-    """The primary Teeth Agent API."""
+class CarbideAgentAPI(component.APIComponent):
+    """The primary Carbide Agent API."""
 
     def __init__(self, agent):
-        super(TeethAgentAPI, self).__init__()
+        super(CarbideAgentAPI, self).__init__()
         self.agent = agent
 
     def add_routes(self):
@@ -86,9 +86,9 @@ class TeethAgentAPI(component.APIComponent):
         return responses.ItemResponse(result)
 
 
-class TeethAgentAPIServer(component.APIServer):
-    """Server for the teeth agent API."""
+class CarbideAgentAPIServer(component.APIServer):
+    """Server for the carbide agent API."""
 
     def __init__(self, agent):
-        super(TeethAgentAPIServer, self).__init__()
-        self.add_component('/v1.0', TeethAgentAPI(agent))
+        super(CarbideAgentAPIServer, self).__init__()
+        self.add_component('/v1.0', CarbideAgentAPI(agent))

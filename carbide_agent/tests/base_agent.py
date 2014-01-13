@@ -21,16 +21,16 @@ import unittest
 import mock
 import pkg_resources
 
-from teeth_rest import encoding
+from carbide_rest import encoding
 
-from teeth_agent import base
-from teeth_agent import errors
+from carbide_agent import base
+from carbide_agent import errors
 
 
 EXPECTED_ERROR = RuntimeError('command execution failed')
 
 
-class FooTeethAgentCommandResult(base.AsyncCommandResult):
+class FooCarbideAgentCommandResult(base.AsyncCommandResult):
     def execute(self):
         if self.command_params['fail']:
             raise EXPECTED_ERROR
@@ -41,7 +41,7 @@ class FooTeethAgentCommandResult(base.AsyncCommandResult):
 class TestHeartbeater(unittest.TestCase):
     def setUp(self):
         self.mock_agent = mock.Mock()
-        self.heartbeater = base.TeethAgentHeartbeater(self.mock_agent)
+        self.heartbeater = base.CarbideAgentHeartbeater(self.mock_agent)
         self.heartbeater.api = mock.Mock()
         self.heartbeater.stop_event = mock.Mock()
 
@@ -108,12 +108,12 @@ class TestHeartbeater(unittest.TestCase):
         self.assertEqual(self.heartbeater.error_delay, 2.7)
 
 
-class TestBaseTeethAgent(unittest.TestCase):
+class TestBaseCarbideAgent(unittest.TestCase):
     def setUp(self):
         self.encoder = encoding.RESTJSONEncoder(
             encoding.SerializationViews.PUBLIC,
             indent=4)
-        self.agent = base.BaseTeethAgent('fake_host',
+        self.agent = base.BaseCarbideAgent('fake_host',
                                          'fake_port',
                                          'fake_api',
                                          'TEST_MODE')
@@ -131,11 +131,11 @@ class TestBaseTeethAgent(unittest.TestCase):
         self.agent.started_at = started_at
 
         status = self.agent.get_status()
-        self.assertIsInstance(status, base.TeethAgentStatus)
+        self.assertIsInstance(status, base.CarbideAgentStatus)
         self.assertEqual(status.mode, 'TEST_MODE')
         self.assertEqual(status.started_at, started_at)
         self.assertEqual(status.version,
-                         pkg_resources.get_distribution('teeth-agent').version)
+                         pkg_resources.get_distribution('carbide-agent').version)
 
     def test_execute_command(self):
         do_something_impl = mock.Mock()
@@ -170,7 +170,7 @@ class TestBaseTeethAgent(unittest.TestCase):
         self.assertRaises(RuntimeError, self.agent.run)
 
     def test_async_command_success(self):
-        result = FooTeethAgentCommandResult('foo_command', {'fail': False})
+        result = FooCarbideAgentCommandResult('foo_command', {'fail': False})
         expected_result = {
             'id': result.id,
             'command_name': 'foo_command',
@@ -192,7 +192,7 @@ class TestBaseTeethAgent(unittest.TestCase):
         self.assertEqualEncoded(result, expected_result)
 
     def test_async_command_failure(self):
-        result = FooTeethAgentCommandResult('foo_command', {'fail': True})
+        result = FooCarbideAgentCommandResult('foo_command', {'fail': True})
         expected_result = {
             'id': result.id,
             'command_name': 'foo_command',

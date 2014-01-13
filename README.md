@@ -1,3 +1,3 @@
-# teeth-agent
+# carbide-agent
 
-An agent for rebuilding and controlling Teeth chassis.
+An agent for rebuilding and controlling Carbide chassis.

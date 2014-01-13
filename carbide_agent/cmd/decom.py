@@ -16,17 +16,17 @@ limitations under the License.
 
 import argparse
 
-from teeth_agent import decom
-from teeth_agent import logging
+from carbide_agent import decom
+from carbide_agent import logging
 
 
 def run():
     parser = argparse.ArgumentParser(
-        description='Run the teeth-agent in decom mode')
+        description='Run the carbide-agent in decom mode')
 
     parser.add_argument('--api-url',
                         required=True,
-                        help='URL of the Teeth agent API')
+                        help='URL of the Carbide agent API')
 
     args = parser.parse_args()
 

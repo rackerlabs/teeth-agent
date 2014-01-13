@@ -22,13 +22,13 @@ import unittest
 from werkzeug import test
 from werkzeug import wrappers
 
-from teeth_rest import encoding
+from carbide_rest import encoding
 
-from teeth_agent import api
-from teeth_agent import base
+from carbide_agent import api
+from carbide_agent import base
 
 
-class TestTeethAPI(unittest.TestCase):
+class TestCarbideAPI(unittest.TestCase):
     def _get_env_builder(self, method, path, data=None, query=None):
         if data is not None:
             data = json.dumps(data)
@@ -44,10 +44,10 @@ class TestTeethAPI(unittest.TestCase):
         return client.open(self._get_env_builder(method, path, data, query))
 
     def test_get_agent_status(self):
-        status = base.TeethAgentStatus('TEST_MODE', time.time(), 'v72ac9')
+        status = base.CarbideAgentStatus('TEST_MODE', time.time(), 'v72ac9')
         mock_agent = mock.MagicMock()
         mock_agent.get_status.return_value = status
-        api_server = api.TeethAgentAPIServer(mock_agent)
+        api_server = api.CarbideAgentAPIServer(mock_agent)
 
         response = self._make_request(api_server, 'GET', '/v1.0/status')
         mock_agent.get_status.assert_called_once_with()
@@ -71,7 +71,7 @@ class TestTeethAPI(unittest.TestCase):
 
         mock_agent = mock.MagicMock()
         mock_agent.execute_command.return_value = result
-        api_server = api.TeethAgentAPIServer(mock_agent)
+        api_server = api.CarbideAgentAPIServer(mock_agent)
 
         response = self._make_request(api_server,
                                       'POST',
@@ -89,7 +89,7 @@ class TestTeethAPI(unittest.TestCase):
 
     def test_execute_agent_command_validation(self):
         mock_agent = mock.MagicMock()
-        api_server = api.TeethAgentAPIServer(mock_agent)
+        api_server = api.CarbideAgentAPIServer(mock_agent)
 
         invalid_command = {}
         response = self._make_request(api_server,
@@ -102,7 +102,7 @@ class TestTeethAPI(unittest.TestCase):
 
     def test_execute_agent_command_params_validation(self):
         mock_agent = mock.MagicMock()
-        api_server = api.TeethAgentAPIServer(mock_agent)
+        api_server = api.CarbideAgentAPIServer(mock_agent)
 
         invalid_command = {'name': 'do_things', 'params': []}
         response = self._make_request(api_server,
@@ -120,12 +120,12 @@ class TestTeethAPI(unittest.TestCase):
                                             True,
                                             {'test': 'result'})
 
-        mock_agent = mock.create_autospec(base.BaseTeethAgent)
+        mock_agent = mock.create_autospec(base.BaseCarbideAgent)
         mock_agent.list_command_results.return_value = [
             cmd_result,
         ]
 
-        api_server = api.TeethAgentAPIServer(mock_agent)
+        api_server = api.CarbideAgentAPIServer(mock_agent)
         response = self._make_request(api_server, 'GET', '/v1.0/commands')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.data), {
@@ -144,10 +144,10 @@ class TestTeethAPI(unittest.TestCase):
         serialized_cmd_result = cmd_result.serialize(
             encoding.SerializationViews.PUBLIC)
 
-        mock_agent = mock.create_autospec(base.BaseTeethAgent)
+        mock_agent = mock.create_autospec(base.BaseCarbideAgent)
         mock_agent.get_command_result.return_value = cmd_result
 
-        api_server = api.TeethAgentAPIServer(mock_agent)
+        api_server = api.CarbideAgentAPIServer(mock_agent)
         response = self._make_request(api_server,
                                       'GET',
                                       '/v1.0/commands/abc123')

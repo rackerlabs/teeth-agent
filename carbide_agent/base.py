@@ -24,16 +24,16 @@ import uuid
 from cherrypy import wsgiserver
 import pkg_resources
 import structlog
-from teeth_rest import encoding
-from teeth_rest import errors as rest_errors
+from carbide_rest import encoding
+from carbide_rest import errors as rest_errors
 
-from teeth_agent import api
-from teeth_agent import errors
-from teeth_agent import hardware
-from teeth_agent import overlord_agent_api
+from carbide_agent import api
+from carbide_agent import errors
+from carbide_agent import hardware
+from carbide_agent import overlord_agent_api
 
 
-class TeethAgentStatus(encoding.Serializable):
+class CarbideAgentStatus(encoding.Serializable):
     def __init__(self, mode, started_at, version):
         self.mode = mode
         self.started_at = started_at
@@ -140,7 +140,7 @@ class AsyncCommandResult(BaseCommandResult):
         pass
 
 
-class TeethAgentHeartbeater(threading.Thread):
+class CarbideAgentHeartbeater(threading.Thread):
     # If we could wait at most N seconds between heartbeats (or in case of an
     # error) we will instead wait r x N seconds, where r is a random value
     # between these multipliers.
@@ -155,7 +155,7 @@ class TeethAgentHeartbeater(threading.Thread):
     backoff_factor = 2.7
 
     def __init__(self, agent):
-        super(TeethAgentHeartbeater, self).__init__()
+        super(CarbideAgentHeartbeater, self).__init__()
         self.agent = agent
         self.api = overlord_agent_api.APIClient(agent.api_url)
         self.log = structlog.get_logger(api_url=agent.api_url)
@@ -198,24 +198,24 @@ class TeethAgentHeartbeater(threading.Thread):
         return self.join()
 
 
-class BaseTeethAgent(object):
+class BaseCarbideAgent(object):
     def __init__(self, listen_host, listen_port, api_url, mode):
         self.listen_host = listen_host
         self.listen_port = listen_port
         self.api_url = api_url
         self.started_at = None
         self.mode = mode
-        self.version = pkg_resources.get_distribution('teeth-agent').version
-        self.api = api.TeethAgentAPIServer(self)
+        self.version = pkg_resources.get_distribution('carbide-agent').version
+        self.api = api.CarbideAgentAPIServer(self)
         self.command_results = collections.OrderedDict()
         self.command_map = {}
-        self.heartbeater = TeethAgentHeartbeater(self)
+        self.heartbeater = CarbideAgentHeartbeater(self)
         self.hardware = hardware.HardwareInspector()
         self.command_lock = threading.Lock()
 
     def get_status(self):
         """Retrieve a serializable status."""
-        return TeethAgentStatus(
+        return CarbideAgentStatus(
             mode=self.mode,
             started_at=self.started_at,
             version=self.version
@@ -271,7 +271,7 @@ class BaseTeethAgent(object):
             return result
 
     def run(self):
-        """Run the Teeth Agent."""
+        """Run the Carbide Agent."""
         if self.started_at:
             raise RuntimeError('Agent was already started')
 
