@@ -15,29 +15,22 @@ limitations under the License.
 """
 
 import hashlib
-import json
 import os
 import subprocess
 
 import requests
 
 from teeth_agent import base
+from teeth_agent import configdrive
 from teeth_agent import errors
+
+
+def _configdrive_location():
+    return '/tmp/configdrive'
 
 
 def _image_location(image_info):
     return '/tmp/{}'.format(image_info['id'])
-
-
-def _write_local_config_drive(location, data):
-    """Writes a config_drive directory at `location`."""
-    if not os.path.exists(location):
-        os.makedirs(location)
-
-    filename = os.path.join(location, 'meta_data.json')
-    with open(filename, 'w') as f:
-        json_data = json.dumps(data)
-        f.write(json_data)
 
 
 def _path_to_script(script):
@@ -118,12 +111,13 @@ class PrepareImageCommand(base.AsyncCommandResult):
     """Downloads and writes an image and configdrive to a device."""
     def execute(self):
         image_info = self.command_params['image_info']
-        location = self.command_params['configdrive']['location']
-        data = self.command_params['configdrive']['data']
-        device = self.command_params['device']
+        location = _configdrive_location()
+        metadata = self.command_params['metadata']
+        files = self.command_params['files']
+        device = '/dev/sda'
 
         _download_image(image_info)
-        _write_local_config_drive(location, data)
+        configdrive.write_configdrive(location, metadata, files)
         _write_image(image_info, location, device)
 
 
