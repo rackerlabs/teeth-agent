@@ -126,3 +126,13 @@ class SystemRebootError(errors.RESTError):
         super(SystemRebootError, self).__init__()
         self.details = 'Reboot script failed with exit code {}.'
         self.details = self.details.format(exit_code)
+
+
+class FrozenDriveError(errors.RESTError):
+    """Error raised when a drive is frozen."""
+
+    message = 'Drive is frozen.'
+
+    def __init__(self, drive):
+        super(FrozenDriveError, self).__init__()
+        self.details = 'Drive {} is frozen.'.format(drive)
