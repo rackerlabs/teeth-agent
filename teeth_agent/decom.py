@@ -20,20 +20,10 @@ from teeth_agent import base
 from teeth_agent import errors
 
 
-def _read_hdparm_output(process):
-    output = p.communicate()[0]
-    output = output.replace('\n', '')
-    output = output.replace('\t', '')
-    output = output.replace(' ', '')
-    return output
-
-
 def _check_for_frozen_drive(drive):
     # TODO(jimrollenhagen) does this require the key?
-    p = subprocess.Popen('hdparm -I {}'.format(drive),
-                         shell=True,
-                         stdout=subprocess.PIPE)
-    output = _read_hdparm_output(p)
+    output = subprocess.check_output('hdparm -I {}'.format(drive), shell=True)
+    output = output.translate(None, '\n\t ')
 
     if 'notfrozen' not in output:
         raise errors.FrozenDriveError(drive)
@@ -45,8 +35,7 @@ def _secure_drive(drive, key):
     cmd = 'hdparm --user-master u --security-set-pass {} {}'.format(key, drive)
 
     # TODO(jimrollenhagen) error checking
-    p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-    p.communicate()
+    output = subprocess.check_output(cmd, shell=True)
 
 
 def _erase_drive(drive, key):
@@ -55,8 +44,7 @@ def _erase_drive(drive, key):
     cmd = 'hdparm --user-master u --security-erase {} {}'.format(key, drive)
 
     # TODO(jimrollenhagen) error checking
-    p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-    p.communicate()
+    output = subprocess.check_output(cmd, shell=True)
 
 
 class SecureDrivesCommand(base.AsyncCommandResult):
