@@ -8,7 +8,7 @@ ADD . /tmp/teeth-agent
 # Install requirements: Python for teeth-agent, others for putting an image on disk
 RUN apt-get update && apt-get -y install \
     python python-pip python-dev \
-    qemu-utils parted util-linux genisoimage git
+    qemu-utils parted util-linux genisoimage hdparm git
 
 # Install requirements separately, because pip understands a git+https url while setuptools doesn't
 RUN pip install -r /tmp/teeth-agent/requirements.txt
