@@ -161,7 +161,7 @@ class TestStandbyMode(unittest.TestCase):
 
         standby._download_image(image_info)
         requests_mock.assert_called_once_with(image_info['urls'][0],
-                                              stream=True)
+                                              stream=True, headers={})
         write = open_mock.return_value.write
         write.assert_any_call('some')
         write.assert_any_call('content')
