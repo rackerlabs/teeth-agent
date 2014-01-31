@@ -170,7 +170,7 @@ class TestStandbyMode(unittest.TestCase):
     @mock.patch('hashlib.md5', autospec=True)
     @mock.patch('__builtin__.open', autospec=True)
     @mock.patch('requests.get', autospec=True)
-    def test_downoad_image_headers(self, requests_mock, open_mock, md5_mock):
+    def test_download_image_headers(self, requests_mock, open_mock, md5_mock):
         image_info = self._build_fake_image_info()
         image_info['extra_headers'] = {'foo': 'bar'}
         response = requests_mock.return_value
