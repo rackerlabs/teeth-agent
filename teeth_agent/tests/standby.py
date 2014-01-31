@@ -167,6 +167,23 @@ class TestStandbyMode(unittest.TestCase):
         write.assert_any_call('content')
         self.assertEqual(write.call_count, 2)
 
+    @mock.patch('hashlib.md5', autospec=True)
+    @mock.patch('__builtin__.open', autospec=True)
+    @mock.patch('requests.get', autospec=True)
+    def test_downoad_image_headers(self, requests_mock, open_mock, md5_mock):
+        image_info = self._build_fake_image_info()
+        image_info['extra_headers'] = {'foo': 'bar'}
+        response = requests_mock.return_value
+        response.status_code = 200
+        response.iter_content.return_value = ['some', 'content']
+        hexdigest_mock = md5_mock.return_value.hexdigest
+        hexdigest_mock.return_value = image_info['hashes'].values()[0]
+
+        standby._download_image(image_info)
+        requests_mock.assert_called_once_with(image_info['urls'][0],
+                                              stream=True,
+                                              headers={'foo': 'bar'})
+
     @mock.patch('requests.get', autospec=True)
     def test_download_image_bad_status(self, requests_mock):
         image_info = self._build_fake_image_info()
