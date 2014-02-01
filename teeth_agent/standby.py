@@ -74,7 +74,8 @@ def _copy_configdrive_to_disk(configdrive_dir, device):
 
 
 def _request_url(image_info, url):
-    resp = requests.get(url, stream=True)
+    headers = image_info.get('extra_headers', {})
+    resp = requests.get(url, stream=True, headers=headers)
     if resp.status_code != 200:
         raise errors.ImageDownloadError(image_info['id'])
     return resp
