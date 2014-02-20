@@ -74,13 +74,14 @@ class AsyncCommandResult(BaseCommandResult):
     """A command that executes asynchronously in the background. Subclasses
     should override `execute` to implement actual command execution.
     """
-    def __init__(self, command_name, command_params):
+    def __init__(self, mode, command_name, command_params):
         super(AsyncCommandResult, self).__init__(command_name, command_params)
         self.command_state_lock = threading.Lock()
 
         thread_name = 'agent-command-{}'.format(self.id)
         self.execution_thread = threading.Thread(target=self.run,
                                                  name=thread_name)
+        self.mode = mode
 
     def serialize(self, view):
         with self.command_state_lock:
