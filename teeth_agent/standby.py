@@ -151,6 +151,8 @@ class CacheImageCommand(base.AsyncCommandResult):
         _download_image(image_info)
         _write_image(image_info, device)
 
+        self.mode.cached_image_id = image_info['id']
+
 
 class PrepareImageCommand(base.AsyncCommandResult):
     """Downloads and writes an image and configdrive to a device."""
@@ -161,8 +163,10 @@ class PrepareImageCommand(base.AsyncCommandResult):
         files = self.command_params['files']
         device = hardware.get_manager().get_os_install_device()
 
-        _download_image(image_info)
-        _write_image(image_info, device)
+        # don't write out image if already cached
+        if self.mode.cached_image_id != image_info['id']:
+            _download_image(image_info)
+            _write_image(image_info, device)
 
         log.debug('Writing configdrive', location=location)
         configdrive.write_configdrive(location, metadata, files)
@@ -180,6 +184,7 @@ class StandbyMode(base.BaseAgentMode):
         self.command_map['cache_image'] = self.cache_image
         self.command_map['prepare_image'] = self.prepare_image
         self.command_map['run_image'] = self.run_image
+        self.cached_image_id = None
 
     def _validate_image_info(self, image_info):
         for field in ['id', 'urls', 'hashes']:
