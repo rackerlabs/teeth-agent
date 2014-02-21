@@ -71,10 +71,11 @@ class TeethAgentAPI(component.APIComponent):
 
     def execute_command(self, request):
         """Execute a command on the agent."""
-        command = AgentCommand.deserialize(self.parse_content(request))
+        data = self.parse_content(request)
+        command = AgentCommand.deserialize(data)
         result = self.agent.execute_command(command.name, **command.params)
 
-        wait = request.args.get('wait')
+        wait = data.get('wait')
         if wait and wait.lower() == 'true':
             result.join()
 
