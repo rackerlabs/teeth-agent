@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import collections
 import threading
 import uuid
 
@@ -26,14 +25,14 @@ from teeth_agent import errors
 
 
 class AgentCommandStatus(object):
-    RUNNING = 'RUNNING'
-    SUCCEEDED = 'SUCCEEDED'
-    FAILED = 'FAILED'
+    RUNNING = u'RUNNING'
+    SUCCEEDED = u'SUCCEEDED'
+    FAILED = u'FAILED'
 
 
 class BaseCommandResult(encoding.Serializable):
     def __init__(self, command_name, command_params):
-        self.id = str(uuid.uuid4())
+        self.id = unicode(uuid.uuid4())
         self.command_name = command_name
         self.command_params = command_params
         self.command_status = AgentCommandStatus.RUNNING
@@ -41,14 +40,14 @@ class BaseCommandResult(encoding.Serializable):
         self.command_result = None
 
     def serialize(self, view):
-        return collections.OrderedDict([
-            ('id', self.id),
-            ('command_name', self.command_name),
-            ('command_params', self.command_params),
-            ('command_status', self.command_status),
-            ('command_error', self.command_error),
-            ('command_result', self.command_result),
-        ])
+        return dict((
+            (u'id', self.id),
+            (u'command_name', self.command_name),
+            (u'command_params', self.command_params),
+            (u'command_status', self.command_status),
+            (u'command_error', self.command_error),
+            (u'command_result', self.command_result),
+        ))
 
     def is_done(self):
         return self.command_status != AgentCommandStatus.RUNNING
