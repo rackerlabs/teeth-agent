@@ -14,9 +14,79 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import subprocess
+
 from teeth_agent import base
+from teeth_agent import errors
+
+
+def _check_for_frozen_drive(drive):
+    # TODO(jimrollenhagen) does this require the key?
+    output = subprocess.check_output('hdparm -I {}'.format(drive), shell=True)
+    output = output.translate(None, '\n\t ')
+
+    if 'notfrozen' not in output:
+        raise errors.FrozenDriveError(drive)
+
+
+def _secure_drive(drive, key):
+    _check_for_frozen_drive(drive)
+
+    cmd = 'hdparm --user-master u --security-set-pass {} {}'.format(key, drive)
+
+    # TODO(jimrollenhagen) error checking
+    output = subprocess.check_output(cmd, shell=True)
+
+
+def _erase_drive(drive, key):
+    _check_for_frozen_drive(drive)
+
+    cmd = 'hdparm --user-master u --security-erase {} {}'.format(key, drive)
+
+    # TODO(jimrollenhagen) error checking
+    output = subprocess.check_output(cmd, shell=True)
+
+
+class SecureDrivesCommand(base.AsyncCommandResult):
+    def execute(self):
+        drives = self.command_params['drives']
+        key = self.command_params['key']
+
+        for drive in drives:
+            _secure_drive(drive, key)
+
+
+class EraseDrivesCommand(base.AsyncCommandResult):
+    def execute(self):
+        drives = self.command_params['drives']
+        key = self.command_params['key']
+
+        for drive in drives:
+            _erase_drive(drive, key)
 
 
 class DecomMode(base.BaseAgentMode):
     def __init__(self):
         super(DecomMode, self).__init__('DECOM')
+        self.command_map['secure_drives'] = self.secure_drives
+        self.command_map['erase_drives'] = self.erase_drives
+
+    def _validate_drive_info(self, drive_info):
+        drives = drive_info.get('drives')
+        if type(drives) != list or not drives:
+            raise errors.InvalidCommandParamsError(
+                'Parameter \'drives\' must be a list with at least one '
+                'element.')
+
+        key = drive_info.get('key')
+        if not isinstance(key, basestring) or not key:
+            raise errors.InvalidCommandParamsError(
+                'Parameter \'drives\' must be a non-empty string.')
+
+    def secure_drives(self, command_name, **command_params):
+        self._validate_drives(command_params)
+        return SecureDrivesCommand(command_name, command_params).start()
+
+    def erase_drives(self, command_name, **command_params):
+        self._validate_drives(command_params)
+        return EraseDrivesCommand(command_name, command_params).start()
