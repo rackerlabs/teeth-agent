@@ -1,4 +1,4 @@
-requests==2.0.0
+requests==2.20.0
 stevedore==0.14
 ordereddict>=1.1
 -e git+https://github.com/jimrollenhagen/pecan@7c8db9bca2daf33a4616f0308db75a0c0d55d015#egg=pecan
